@@ -109,7 +109,10 @@ const formatDbtData = (graphData: DbtGraph) => {
   const modelNodes: SelectOptionProps[] = [];
   Object.entries({ ...graphData.sources, ...graphData.nodes })
     .forEach(([key, value]) => {
-      const { resource_type: resourceType, package_name: packageName } = value;
+      const {
+        resource_type: resourceType,
+        package_name: packageName,
+      } = value;
 
       if (supportedResTypes.has(resourceType) && packageName !== 're_data') {
         const modelId = generateModelId(value);
@@ -120,6 +123,7 @@ const formatDbtData = (graphData: DbtGraph) => {
         });
       }
     });
+  console.log('format model -> ', dbtMapping, modelNodes);
   return { dbtMapping, modelNodes };
 };
 

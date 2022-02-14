@@ -1,8 +1,9 @@
 import React, { ReactElement, useContext } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { NodeOptions, Options } from 'vis';
-import LineageGraph from '../components/LineageGraph';
-import ModelDetails from '../components/ModelDetails';
+// import LineageGraph from '../components/LineageGraph';
+// import ModelDetails from '../components/ModelDetails';
+import { Graphins, ModelDetails } from '../components';
 import {
   DbtNode, DbtSource, OverviewData, RedataOverviewContext,
 } from '../contexts/redataOverviewContext';
@@ -132,17 +133,28 @@ const generateGraph = (overview: OverviewData, modelName?: string | null) => {
     Object.entries(allNodes).forEach(([, details]) => {
       if (supportedResTypes.has(details.resource_type) && details.package_name !== 're_data') {
         const modelId = generateModelId(details);
-        const node: VisNode = {
+        // console.log('details -> ', details);
+
+        const resourceTypeCheck = details.resource_type !== 'source';
+
+        const materializedType = resourceTypeCheck && details?.config?.materialized
+          ? `(${details.config.materialized})` : '';
+
+        console.log('materializedType -> ', materializedType);
+
+        const node: any = {
           id: modelId,
           label: details.name,
           shape: 'box',
           color: {
             background: resourceTypeColors[details.resource_type],
           },
+          materializedType,
+          dbName: `${details.database}.${details.schema}`,
         };
         graph.nodes.push(node);
 
-        if (details.resource_type !== 'source') {
+        if (resourceTypeCheck) {
           const d = details as DbtNode;
           const parentNodes = new Set(d.depends_on.nodes);
           parentNodes.forEach((parent) => {
@@ -287,13 +299,14 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps): ReactElemen
         className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-12
         gap-4 bg-white border-2 border-solid border-gray-200 rounded-lg h-full"
       >
-        <LineageGraph
+        <Graphins data={graph} showModelDetails={showModelDetails} />
+        {/* <LineageGraph
           data={graph}
           events={events}
           networkOptions={networkOptions}
           overviewDataLoaded={overviewDataLoaded}
           showModelDetails={showModelDetails}
-        />
+        /> */}
 
         {showModelDetails && <ModelDetails />}
       </div>

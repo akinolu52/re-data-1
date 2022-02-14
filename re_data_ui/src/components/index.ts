@@ -6,3 +6,4 @@ export { default as MetricCharts } from './MetricCharts';
 export { default as ModelDetails } from './ModelDetails';
 export { default as TableSchema } from './TableSchema';
 export { default as SchemaChanges } from './SchemaChanges';
+export { default as Graphins } from './Graphins';
