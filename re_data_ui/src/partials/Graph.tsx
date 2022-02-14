@@ -5,7 +5,8 @@ import { NodeOptions, Options } from 'vis';
 // import ModelDetails from '../components/ModelDetails';
 import { Graphins, ModelDetails } from '../components';
 import {
-  DbtNode, DbtSource, OverviewData, RedataOverviewContext,
+  DbtNode, DbtSource, OverviewData,
+  RedataOverviewContext, ReDataModelDetails,
 } from '../contexts/redataOverviewContext';
 import { generateModelId, supportedResTypes } from '../utils';
 
@@ -61,7 +62,10 @@ const generateGraph = (overview: OverviewData, modelName?: string | null) => {
     return graph;
   }
 
-  const { dbtMapping } = overview;
+  const {
+    dbtMapping, modelNodes,
+    aggregated_models: aggregatedModels,
+  } = overview;
   const dbtNodes = overview.graph.nodes;
   const dbtSources = overview.graph.sources;
 
@@ -132,19 +136,22 @@ const generateGraph = (overview: OverviewData, modelName?: string | null) => {
       }
     });
   } else {
-    const { modelNodes } = overview;
+    console.log('MODEL NODES:', modelNodes, aggregatedModels);
+
     for (let index = 0; index < modelNodes.length; index++) {
       const currentNode = modelNodes[index];
       const modelTitle = dbtMapping[currentNode.label];
       const details = allNodes[modelTitle];
       const modelId = generateModelId(details);
 
+      // const modelDetails = aggregatedModels.get(fullTableName) as ReDataModelDetails;
+
       const resourceTypeCheck = details.resource_type !== 'source';
 
       const materializedType = resourceTypeCheck && details?.config?.materialized
         ? `(${details.config.materialized})` : '';
 
-      console.log('materializedType -> ', materializedType);
+      // console.log('materializedType -> ', materializedType);
 
       const node: any = {
         id: modelId,
