@@ -107,3 +107,73 @@ export const generateModelId = (details: DbtNode | DbtSource): string => {
   const { database, schema, name } = details;
   return `${database}.${schema}.${name}`.toLowerCase();
 };
+
+export const formatData = (data: any) => {
+  console.log('data -> ', data);
+  const { edges, nodes } = data;
+  const result = {
+    edges: [],
+    nodes: [],
+  };
+  for (let index = 0; index < edges.length; index++) {
+    const { from, to } = edges[index];
+    edges[index] = {
+      // id, arrows,
+      source: from,
+      target: to,
+    };
+  }
+
+  for (let index = 0; index < nodes.length; index++) {
+    // console.log('node -> ', nodes[index]);
+    const {
+      id, color: { background },
+      materializedType, dbName: subTitle,
+    } = nodes[index];
+    const label = id.split('.').at(-1);
+
+    nodes[index] = {
+      id,
+      label,
+      materializedType,
+      backgroundColor: background,
+      subTitle,
+      // type: 'custom-node',
+      // type: 'graphin-circle',
+      style: {
+        label: {
+          value: id, // add label
+        },
+        halo: {
+          visible: true,
+          stroke: 'red',
+        },
+        keyshape: {
+          size: 40,
+          // stroke: "red",
+          // fill: "red",
+          // fillOpacity: 0.2
+        },
+        badges: [
+          {
+            position: 'RT',
+            type: 'text',
+            value: index,
+            size: [15, 15],
+            fill: 'red',
+            color: '#fff',
+          },
+        ],
+      },
+
+      // arrows,
+      // source: from,
+      // target: to
+    };
+  }
+
+  result.nodes = nodes;
+  result.edges = edges;
+
+  return result;
+};

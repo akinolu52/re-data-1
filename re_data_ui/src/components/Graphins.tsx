@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import G6 from '@antv/g6';
 import {
-  Circle, createNodeFromReact, Group,
-  Rect, Text,
+  Circle, createNodeFromReact,
+  Group, Rect, Text,
 } from '@antv/g6-react-node';
 import Graphin, { Behaviors } from '@antv/graphin';
 import React from 'react';
+import ReactDOM from 'react-dom';
+import { formatData } from '../utils';
 
 const { ZoomCanvas } = Behaviors;
 
@@ -16,220 +19,148 @@ const CustomNode = ({ cfg = {} }: any) => {
   // console.log("cfg -> ", cfg);
   return (
     <Group>
-
-      <Circle
-        style={{
-        //   width: 10,
-        //   height: 10,
-          r: 7,
-          //   position: 'absolute',
-          // top: 10,
-          // margin: [-100, 0, 0 ,0],
-          fill: 'hsl(0deg 88% 67%)',
-          cursor: 'move',
-        //   radius: 5,
-        }}
-      >
-        {/* <Text style={{ fill: '#fff' }}>ok</Text> */}
-      </Circle>
-
-      <Rect
-        style={
-            {
-              // width: 200,
-              // height: 75
-            }
-          }
-      >
+      <Rect style={{}}>
         <Rect
           draggable
           style={{
-            width: 150,
-            height: 55,
-            // stroke: color,
-            fill: backgroundColor,
+            width: 'auto',
+            height: 'auto',
+            stroke: backgroundColor,
             cursor: 'move',
-            // fill: "#ffffff",
-            radius: 6,
+            fill: '#fff',
+            radius: [6],
+            lineWidth: '2',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: [0, 15, 0, 4],
           }}
         >
-          <Group>
+          <Rect style={{ stroke: 'red' }}>
             <Text
               style={{
                 marginTop: 5,
-                fill: '#fff',
+                fill: '#000',
                 margin: [8, 4],
                 fontWeight: 'bold',
               }}
             >
-              {label}
-              {/* {materializedType ? (
-                <> */}
-
-              {materializedType}
-
-              {/* </>
-              ) : ''} */}
-
+              {`${label} - ${materializedType}`}
             </Text>
 
-            {/* <Text
+            <Text
               style={{
-                marginTop: 5,
-                fill: '#fff',
-                margin: [8, 4],
-                fontWeight: 'bold',
-                fontSize: 12,
+                marginTop: 10,
+                fill: '#000',
+                margin: [6, 4],
+                fontSize: 9,
               }}
             >
-              (
-              {materializedType}
-              )
-            </Text> */}
+              {subTitle}
+            </Text>
 
-            {/* <Rect
-                style={{
-                  position: "absolute"
-                }}
-              >
-                <Text
-                  style={{
-                    marginTop: 5,
-                    fill: "#fff",
-                    margin: [8, 4],
-                    fontWeight: "bold"
-                  }}
-                >
-                  ({materializedType})
-                </Text>
-              </Rect> */}
-          </Group>
-          <Text style={{
-            marginTop: 10,
-            fill: '#fff',
-            margin: [6, 4],
-            fontSize: 9,
-          }}
-          >
-            {subTitle}
-          </Text>
-        </Rect>
-      </Rect>
+          </Rect>
 
-      {/* <Circle
-          style={{
-            stroke: "red",
-            r: 10,
-            fill: "#fff",
-            cursor: "pointer",
-            // position: "absolute",
-            // margin: [0, "auto"]
-          }}
-          name="circle"
-        >
-          <Image
+          <Circle
             style={{
-              img:
-                "https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png",
-              width: 12,
-              height: 12,
-              margin: [4, "auto"],
-              cursor: "pointer"
+              r: 4,
+              stroke: 'red',
+              lineWidth: '2',
+              fill: 'white',
+              cursor: 'move',
             }}
           />
-        </Circle> */}
+
+        </Rect>
+      </Rect>
     </Group>
   );
 };
 
-export const formatData = (data: any) => {
-  console.log('data -> ', data);
-  const { edges, nodes } = data;
-  const result = {
-    edges: [],
-    nodes: [],
-  };
-  for (let index = 0; index < edges.length; index++) {
-    const { from, to } = edges[index];
-    edges[index] = {
-      // id, arrows,
-      source: from,
-      target: to,
-    };
-  }
-
-  for (let index = 0; index < nodes.length; index++) {
-    // console.log('node -> ', nodes[index]);
-    const {
-      id, color: { background },
-      materializedType, dbName: subTitle,
-    } = nodes[index];
-    const label = id.split('.').at(-1);
-
-    nodes[index] = {
-      id,
-      label,
-      materializedType,
-      backgroundColor: background,
-      subTitle,
-      type: 'custom-node',
-      // type: 'graphin-circle',
-      style: {
-        label: {
-          value: id, // add label
-        },
-        halo: {
-          visible: true,
-          stroke: 'red',
-        },
-        keyshape: {
-          size: 40,
-          // stroke: "red",
-          // fill: "red",
-          // fillOpacity: 0.2
-        },
-        badges: [
-          {
-            position: 'RT',
-            type: 'text',
-            value: index,
-            size: [15, 15],
-            fill: 'red',
-            color: '#fff',
-          },
-        ],
-      },
-
-      // arrows,
-      // source: from,
-      // target: to
-    };
-  }
-
-  result.nodes = nodes;
-  result.edges = edges;
-
-  return result;
-};
-
 Graphin.registerNode('custom-node', createNodeFromReact(CustomNode));
 
+const container = document.getElementById('container');
+
+const d = {
+  // The array of nodes
+  nodes: [
+    {
+      id: 'node1',
+      x: 100,
+      y: 200,
+    },
+    {
+      id: 'node2',
+      x: 300,
+      y: 200,
+    },
+  ],
+  // The array of edges
+  edges: [
+    // An edge links from node1 to node2
+    {
+      source: 'node1',
+      target: 'node2',
+    },
+  ],
+};
+
 const Graphins = ({ data, showModelDetails }: any) => {
+  const ref = React.useRef(null);
+  let graph : any = null;
+  // React.useEffect(() => {
+  //   if (!graph) {
+  //     graph = new G6.TreeGraph({
+  //       // eslint-disable-next-line react/no-find-dom-node
+  //       container: ref.current as unknown as 'string | HTMLElement',
+  //       // width: 300,
+  //       // height: 300,
+  //       modes: {
+  //         default: ['drag-canvas'],
+  //       },
+  //       defaultNode: {
+  //         // type: 'card-node',
+  //         type: 'custom-node',
+  //         size: [100, 40],
+  //       },
+  //       defaultEdge: {
+  //         type: 'polyline',
+  //         style: {
+  //           endArrow: true,
+  //         },
+  //       },
+  //       layout: {
+  //         type: 'indented',
+  //         direction: 'LR',
+  //         dropCap: false,
+  //         indent: 200,
+  //         getHeight: () => 20,
+  //         getHGap: () => 0,
+  //       },
+  //     });
+  //   }
+  //   graph.data(d);
+  //   graph.render();
+  // }, []);
   const args = formatData(data);
   return (
-    <div className={showModelDetails ? 'col-span-8' : 'col-span-12'}>
-      <Graphin
+    <>
+      <div className={showModelDetails ? 'col-span-8' : 'col-span-12'}>
+        <Graphin
         // width={300}
         // height={300}
-        // defaultNode={{ type: "custom-node-one" }}
+          defaultNode={{ type: 'custom-node' }}
         // nodeSize={30}
         // layout={{ type: 'dendrogram', direction: 'H' }}
-        data={args}
-      >
-        <ZoomCanvas disabled />
-        {/* <ShowPaths paths={paths} /> */}
-      </Graphin>
-    </div>
+          data={args}
+        >
+          <ZoomCanvas disabled />
+          {/* <ShowPaths paths={paths} /> */}
+        </Graphin>
+      </div>
+      {/* <div id="container" ref={ref} className="col-span-8" /> */}
+    </>
   );
 };
 
