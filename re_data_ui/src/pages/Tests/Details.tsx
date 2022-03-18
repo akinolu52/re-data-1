@@ -1,13 +1,14 @@
 import React, {
   FC, ReactElement, useContext, useState, useEffect, useMemo,
 } from 'react';
-import { useSearchParams, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Select, Table } from '../../components';
 import { ColumnsProps } from '../../components/Table';
 import { SelectOptionProps, OverviewData, RedataOverviewContext } from '../../contexts/redataOverviewContext';
 
 const TestDetails: FC = (): ReactElement => {
   const [result, setResult] = useState([]);
+  const navigate = useNavigate();
 
   const { name } = useParams();
   const columns: ColumnsProps[] = useMemo(() => [
@@ -33,7 +34,6 @@ const TestDetails: FC = (): ReactElement => {
     label: name || '',
     value: name || '',
   });
-  const [, setURLSearchParams] = useSearchParams();
 
   const overview: OverviewData = useContext(RedataOverviewContext);
   const { testObj, loading } = overview;
@@ -52,15 +52,16 @@ const TestDetails: FC = (): ReactElement => {
   const handleChange = (option: SelectOptionProps | null) => {
     if (option) {
       console.log('option ', option);
+      console.log('result => ', testObj[option.value]);
       setOptionValue(option);
       setResult(testObj[option.value]);
-      console.log('result => ', testObj[option.value]);
+      navigate(`/tests/${option.value}`);
     }
   };
 
   return (
     <>
-      <section className="mb-6 border border-red-400">
+      <section className="mb-6">
         <h1 className="text-2xl font-semibold">
           Test
         </h1>
