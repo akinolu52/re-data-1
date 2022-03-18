@@ -78,7 +78,7 @@ const formatOverviewData = (
       schema.model = model;
       schema.run_at = dayjs(schema.run_at).format('YYYY-MM-DD HH:mm:ss');
       details.testSchema.push(schema);
-      testObj[schema.test_name] = [...(testObj[schema.test_name] || []), schema];
+      testObj[schema.model] = [...(testObj[schema.model] || []), schema];
       tests.push(schema);
     } else if (item.type === 'anomaly') {
       const anomaly = JSON.parse(item.data) as Anomaly;

@@ -13,8 +13,8 @@ const TestDetails: FC = (): ReactElement => {
   const { name } = useParams();
   const columns: ColumnsProps[] = useMemo(() => [
     {
-      Header: 'Model',
-      accessor: 'model',
+      Header: 'Test Name',
+      accessor: 'test_name',
     },
     {
       Header: 'Status',
@@ -62,8 +62,8 @@ const TestDetails: FC = (): ReactElement => {
   return (
     <>
       <section className="mb-6">
-        <h1 className="text-2xl font-semibold">
-          Test
+        <h1 className="text-2xl font-semibold mb-1">
+          {`Test for: ${name}`}
         </h1>
         <div className="md:w-1/3 w-full ml-1">
           <Select
