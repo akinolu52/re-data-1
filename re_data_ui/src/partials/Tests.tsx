@@ -19,9 +19,9 @@ type RightComponentProps = {
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const ModelCell = ({ value }: CellProps) => (
+const LinkCell = ({ value, column }: CellProps) => (
   <Link
-    to={`/graph?model=${value.toLowerCase()}`}
+    to={column?.id?.toString() === 'model' ? `/graph?model=${value.toLowerCase()}` : `/tests/${value.toLowerCase()}`}
     className="text-sm text-blue-700 font-semibold"
   >
     {value}
@@ -91,6 +91,7 @@ function TestsPartial(params: TP): ReactElement {
         {
           Header: 'Test Name',
           accessor: 'test_name',
+          Cell: LinkCell,
         },
         {
           Header: 'Status',
@@ -104,7 +105,7 @@ function TestsPartial(params: TP): ReactElement {
         {
           Header: 'Model',
           accessor: 'model',
-          Cell: ModelCell,
+          Cell: LinkCell,
           type: 'type',
         },
       ]);

@@ -50,6 +50,7 @@ function useModel() {
       schemaChanges: [],
       tableSchema: [],
       testSchema: [],
+      testObj: {},
     };
 
     if (overview.aggregated_models.has(fullTableName)) {

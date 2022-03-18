@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import dayjs from 'dayjs';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -26,10 +27,12 @@ interface RawOverviewData {
 
 const formatOverviewData = (
   data: Array<RawOverviewData>,
-): [Map<string, ReDataModelDetails>, ITestSchema[], Alert[]] => {
+): [Map<string, ReDataModelDetails>, ITestSchema[], Record<string, []>, Alert[]] => {
   const result = new Map<string, ReDataModelDetails>();
   const alertsChanges: Alert[] = [];
   const tests: ITestSchema[] = [];
+  const testObj:any = {};
+  // const testObj: Record<string, []> = {};
   data.forEach((item: RawOverviewData) => {
     if (!item.table_name) return;
     const model = stripQuotes(item.table_name).toLowerCase();
@@ -43,6 +46,7 @@ const formatOverviewData = (
         },
         tableSchema: [],
         testSchema: [],
+        testObj: {},
       };
       result.set(model, obj);
     }
@@ -74,6 +78,7 @@ const formatOverviewData = (
       schema.model = model;
       schema.run_at = dayjs(schema.run_at).format('YYYY-MM-DD HH:mm:ss');
       details.testSchema.push(schema);
+      testObj[schema.test_name] = [...(testObj[schema.test_name] || []), schema];
       tests.push(schema);
     } else if (item.type === 'anomaly') {
       const anomaly = JSON.parse(item.data) as Anomaly;
@@ -99,7 +104,7 @@ const formatOverviewData = (
   }
   alertsChanges.sort((a, b) => dayjs(b.time_window_end).diff(a.time_window_end));
 
-  return [result, tests, alertsChanges];
+  return [result, tests, testObj, alertsChanges];
 };
 
 const formatDbtData = (graphData: DbtGraph) => {
@@ -131,6 +136,7 @@ const Dashboard: React.FC = (): ReactElement => {
     loading: true,
     dbtMapping: {},
     modelNodes: [],
+    testObj: {},
   };
   const [reDataOverview, setReDataOverview] = useState<OverviewData>(initialOverview);
   const prepareOverviewData = async (): Promise<void> => {
@@ -155,12 +161,14 @@ const Dashboard: React.FC = (): ReactElement => {
         loading: false,
         dbtMapping: {},
         modelNodes: [],
+        testObj: {},
       };
-      const [aggregatedModels, tests, alerts] = formatOverviewData(overviewData);
+      const [aggregatedModels, tests, testObj, alerts] = formatOverviewData(overviewData);
 
       const { dbtMapping, modelNodes } = formatDbtData(graphData);
 
       overview.aggregated_models = aggregatedModels;
+      overview.testObj = testObj;
       overview.alerts = alerts;
       overview.graph = graphData;
       overview.tests = tests;
