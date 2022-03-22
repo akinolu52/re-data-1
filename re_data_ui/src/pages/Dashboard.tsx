@@ -27,8 +27,8 @@ interface RawOverviewData {
 
 const formatOverviewData = (
   data: Array<RawOverviewData>,
+  result: Map<string, ReDataModelDetails>,
 ): [Map<string, ReDataModelDetails>, ITestSchema[], Record<string, []>, Alert[]] => {
-  const result = new Map<string, ReDataModelDetails>();
   const alertsChanges: Alert[] = [];
   const tests: ITestSchema[] = [];
   const testObj:any = {};
@@ -163,9 +163,23 @@ const Dashboard: React.FC = (): ReactElement => {
         modelNodes: [],
         testObj: {},
       };
-      const [aggregatedModels, tests, testObj, alerts] = formatOverviewData(overviewData);
-
       const { dbtMapping, modelNodes } = formatDbtData(graphData);
+      const result = new Map<string, ReDataModelDetails>();
+      for (const node of modelNodes) {
+        const obj: ReDataModelDetails = {
+          anomalies: new Map<string, Array<Anomaly>>(),
+          schemaChanges: [],
+          metrics: {
+            tableMetrics: new Map<string, Array<Metric>>(),
+            columnMetrics: new Map<string, Array<Metric>>(),
+          },
+          tableSchema: [],
+          testSchema: [],
+          testObj: {},
+        };
+        result.set(node.value, obj);
+      }
+      const [aggregatedModels, tests, testObj, alerts] = formatOverviewData(overviewData, result);
 
       overview.aggregated_models = aggregatedModels;
       overview.testObj = testObj;
