@@ -2,7 +2,7 @@ import React, {
   ReactElement, useContext, useMemo, useState,
 } from 'react';
 import { FaRegSmileWink } from 'react-icons/all';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { EmptyContent, Table } from '../components';
 import { CellProps, ColumnsProps } from '../components/Table';
 import {
@@ -25,16 +25,21 @@ type RightComponentProps = {
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const LinkCell = ({ value, column, row }: CellProps) => (
-  <Link
-    to={column?.id?.toString() === 'model' ? `/graph?model=${value.toLowerCase()}` : `/tests/${row?.values?.model?.toLowerCase()}`}
-    className="text-sm text-blue-700 font-semibold"
-  >
-    {value}
-  </Link>
-);
+const LinkCell = ({ value, row }: CellProps) => {
+  const { pathname } = useLocation();
+  return (
+    <Link
+      to={pathname !== '/tests'
+        ? `/graph?model=${value.toLowerCase()}`
+        : `/tests/${value.toLowerCase()}/${row?.values?.test_name?.toLowerCase()}`}
+      className="text-sm text-blue-700 font-semibold"
+    >
+      {value}
+    </Link>
+  );
+};
 
-const StatusCell = ({ value }: CellProps) => (
+export const StatusCell = ({ value }: CellProps): JSX.Element => (
   <div
     className={`${value?.toLowerCase()} text-xs font-medium text-center py-1 rounded-full`}
   >
@@ -42,7 +47,9 @@ const StatusCell = ({ value }: CellProps) => (
   </div>
 );
 
-const RightComponent = ({ options, value, handleChange }: RightComponentProps) => (
+export const RightComponent = (
+  { options, value, handleChange }: RightComponentProps,
+): JSX.Element => (
   <select
     className="px-2 py-1 rounded-md w-1/4 right-component border border-gray-300"
     onChange={handleChange}
