@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import EChartsReactCore from 'echarts-for-react/lib/core';
 import { ToolboxComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import React, {
-  FC, ReactElement, useContext, useEffect, useMemo, useState,
+  FC, ReactElement, ReactNode, useContext, useEffect, useMemo, useState,
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -81,7 +80,12 @@ const values = ({ timelineData }: valuesProps) => {
   return {};
 };
 
-const Code = ({ code, language }: any): JSX.Element => (
+type CodeProps = {
+  code: ReactNode
+  language: string
+}
+
+const Code = ({ code, language }: CodeProps): JSX.Element => (
   <SyntaxHighlighter language={language} style={dark}>
     {code}
   </SyntaxHighlighter>
@@ -220,9 +224,9 @@ const TestDetails: FC = (): ReactElement => {
     }
   };
 
-  const results: any = useMemo(() => {
+  const results: ITestSchema = useMemo(() => {
     const key = selectedOption || Array.from(runAtOptions)?.[0];
-    return testDetailsObject?.[key];
+    return testDetailsObject?.[key] as ITestSchema;
   }, [runAtOptions, testDetailsObject, selectedOption]);
 
   const handleRunAtChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -255,7 +259,7 @@ const TestDetails: FC = (): ReactElement => {
       <section className="mb-6">
         <h4 className="font-bold">Timeline</h4>
 
-        <div className="mt-2 rounded-md h-96 w-full border border-red-400">
+        <div className="mt-2 rounded-md h-96 w-full">
           {timelineData && (
             <EChartsReactCore echarts={echarts} option={values({ timelineData })} />
           )}
