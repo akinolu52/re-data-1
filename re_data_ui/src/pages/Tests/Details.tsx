@@ -165,7 +165,7 @@ const TestDetails: FC = (): ReactElement => {
 
   const navigate = useNavigate();
 
-  const { modelName, testName } = useParams();
+  const { testName } = useParams();
   const columns: ColumnsProps[] = useMemo(() => [
     {
       Header: 'Test Name',
@@ -197,6 +197,8 @@ const TestDetails: FC = (): ReactElement => {
 
   const overview: OverviewData = useContext(RedataOverviewContext);
   const { testsObject, modelTestMapping, loading } = overview;
+
+  const modelName = modelTestMapping?.[testName || '']?.[0]?.model;
 
   const {
     options, result, timelineData,
@@ -240,6 +242,7 @@ const TestDetails: FC = (): ReactElement => {
     }
   };
 
+  console.log('options[0] ', options[0]);
   return (
     <>
       <section className="mb-6">
@@ -267,6 +270,35 @@ const TestDetails: FC = (): ReactElement => {
       </section>
 
       <section className="mb-6">
+        <div className="flex items-center justify-between mt-2">
+          <h4 className="font-bold text-xl">By Run</h4>
+          <RightComponent
+            options={Array.from(runAtOptions) as []}
+            value={selectedOption || Array.from(runAtOptions)?.[0]}
+            handleChange={handleRunAtChange}
+          />
+        </div>
+
+        {results?.failures_json && (
+          <div className="my-5">
+            <h6 className="font-semibold">Failures Json</h6>
+            <div className="flex flex-col mt-2">
+              <Code code={JSON.stringify(JSON.parse(results.failures_json), null, 2)} language="json" />
+            </div>
+          </div>
+        )}
+
+        {results?.compiled_sql && (
+          <div>
+            <h6 className="font-semibold">Compiled SQL</h6>
+            <div className="flex flex-col mt-2">
+              <Code code={results.compiled_sql} language="sql" />
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="mt-8">
         <div className="flex flex-col mt-2">
           {!loading && testName && (
             <Table
@@ -278,32 +310,7 @@ const TestDetails: FC = (): ReactElement => {
         </div>
       </section>
 
-      <section className="mb-6">
-        <div className="flex items-center justify-between mt-2">
-          <h4 className="font-bold">By Run</h4>
-          <RightComponent
-            options={Array.from(runAtOptions) as []}
-            value={selectedOption}
-            handleChange={handleRunAtChange}
-          />
-        </div>
-
-        <h6>Failures Json</h6>
-        <div className="flex flex-col mt-4">
-          {results?.failures_json && (
-            <Code code={JSON.stringify(JSON.parse(results.failures_json), null, 2)} language="json" />
-          )}
-        </div>
-
-        <h6>Compiled SQL</h6>
-        <div className="flex flex-col mt-4">
-          {results?.compiled_sql && (
-            <Code code={results.compiled_sql} language="sql" />
-          )}
-        </div>
-
-        <div className="h-10" />
-      </section>
+      <div className="h-10" />
     </>
   );
 };

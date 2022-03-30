@@ -25,19 +25,23 @@ type RightComponentProps = {
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const LinkCell = ({ value, row }: CellProps) => {
-  const { pathname } = useLocation();
-  return (
-    <Link
-      to={pathname !== '/tests'
-        ? `/graph?model=${value.toLowerCase()}`
-        : `/tests/${value.toLowerCase()}/${row?.values?.test_name?.toLowerCase()}`}
-      className="text-sm text-blue-700 font-semibold"
-    >
-      {value}
-    </Link>
-  );
-};
+const ModelCell = ({ value }: CellProps) => (
+  <Link
+    to={`/graph?model=${value.toLowerCase()}`}
+    className="text-sm text-blue-700 font-semibold"
+  >
+    {value}
+  </Link>
+);
+
+const LinkCell = ({ value }: CellProps) => (
+  <Link
+    to={`/tests/${value.toLowerCase()}`}
+    className="text-sm text-blue-700 font-semibold"
+  >
+    {value}
+  </Link>
+);
 
 export const StatusCell = ({ value }: CellProps): JSX.Element => (
   <div
@@ -122,6 +126,7 @@ function TestsPartial(params: TP): ReactElement {
     const cols: ColumnsProps[] = [{
       Header: 'Test Name',
       accessor: 'test_name',
+      Cell: LinkCell,
     },
     {
       Header: 'Status',
@@ -136,7 +141,7 @@ function TestsPartial(params: TP): ReactElement {
       cols.push({
         Header: 'Model',
         accessor: 'model',
-        Cell: LinkCell,
+        Cell: ModelCell,
         type: 'type',
       });
     }
