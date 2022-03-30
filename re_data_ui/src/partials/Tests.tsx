@@ -2,7 +2,7 @@ import React, {
   ReactElement, useContext, useMemo, useState,
 } from 'react';
 import { FaRegSmileWink } from 'react-icons/all';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { EmptyContent, Table } from '../components';
 import { CellProps, ColumnsProps } from '../components/Table';
 import {
