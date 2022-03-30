@@ -222,7 +222,7 @@ const TestDetails: FC = (): ReactElement => {
       console.log('result => ', testsObject[option.value], testsObject[modelName]);
       setOptionValue(option);
       // setResult(testsObject[option.value] as never[]);
-      navigate(`/tests/${modelName}/${option.value}`);
+      navigate(`/tests/${option.value}`);
     }
   };
 
